@@ -75,10 +75,7 @@ export function SocialFeedProvider({ children }: { children: React.ReactNode }) 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...newEvent,
-          type: newEvent.type // JSON'a uygun şekilde gönder
-        })
+        body: JSON.stringify(newEvent), // JSON dosyasına kaydet
       });
     } catch (error) {
       console.error('Failed to save social event:', error);

@@ -8,7 +8,7 @@ import { SocialFeatures } from '@/components/token/SocialFeatures';
 import { SocialBoard } from '@/components/SocialBoard';
 import { AboutNightfallModal } from '@/components/AboutNightfallModal';
 import { useAccount } from 'wagmi';
-import { Swords, Crown, Trophy, Coins, Gift,  MessageCircle } from 'lucide-react';
+import { Swords, Crown, Trophy, Coins, Gift, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { FeatureCard } from '@/components/shared/FeatureCard';
 import { GladiatorCreatedModal } from '@/components/arena/GladiatorCreatedModal';
 import { publicClient } from '@/lib/viem';
 import { contracts } from '@/config/contracts';
+import { useGladiators } from '@/contexts/GladiatorContext';
 
 // Sayıyı formatla (1234 -> 1.2K)
 const formatTokenAmount = (amount: bigint) => {
@@ -66,6 +67,8 @@ export default function Home() {
   const [tokenBalance, setTokenBalance] = useState<bigint | null>(null);
   const [isHoveringTokenButton, setIsHoveringTokenButton] = useState(false);
 
+  const { refreshGladiators } = useGladiators();
+
   // Token bakiyesini yenileme fonksiyonu
   const fetchTokenBalance = async () => {
     if (!address) {
@@ -87,7 +90,7 @@ export default function Home() {
     }
   };
 
-  // Her 10 saniyede bir token bakiyesini güncelle
+  // Her 30 saniyede bir token bakiyesini güncelle
   useEffect(() => {
     // İlk yükleme
     fetchTokenBalance();
@@ -122,6 +125,12 @@ export default function Home() {
     };
 
     fetchGladiator();
+  }, [address]);
+
+  useEffect(() => {
+    if (address) {
+      refreshGladiators(address);
+    }
   }, [address]);
 
   useEffect(() => {

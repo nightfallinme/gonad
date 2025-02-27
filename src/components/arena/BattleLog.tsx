@@ -183,12 +183,10 @@ export function BattleLog() {
                         <div className="flex flex-col items-center">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-red-500/20 relative">
-                              <Image
+                              <img
                                 src={getGladiatorImage(battle.loser)}
                                 alt={battle.loserName}
-                                fill
                                 className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               />
                             </div>
                             <span className="text-red-400 text-sm">{battle.loserName}</span>
@@ -198,12 +196,10 @@ export function BattleLog() {
                         <div className="flex flex-col items-center">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-emerald-500/20 relative">
-                              <Image
+                              <img
                                 src={getGladiatorImage(battle.winner)}
                                 alt={battle.winnerName}
-                                fill
                                 className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               />
                             </div>
                             <span className="text-emerald-400 text-sm">{battle.winnerName}</span>

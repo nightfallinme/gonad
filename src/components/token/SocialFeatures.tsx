@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useWalletClient } from 'wagmi';
+import { useWalletClient, useAccount } from 'wagmi';
 import { contracts } from '@/config/contracts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,15 +12,21 @@ import { useToast } from "@/components/ui/use-toast";
 import { publicClient } from '@/lib/viem';
 import { simulateContract, waitForTransactionReceipt } from 'viem/actions';
 import { type Hash } from 'viem';
-import { useToken } from '@/contexts/TokenContext';
+import { useSocialFeed } from '@/contexts/SocialFeedContext';
+import { SocialEventType } from '@/types/SocialEvent';
+
 
 interface FlexStatus {
   dailyFlexes: number;
   memeCount: number;
 }
 
+interface Gladiator {
+  name: string;
+}
+
 export function SocialFeatures() {
-  const { address, } = useToken();
+  const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const [meme, setMeme] = useState('');
   const [showTxModal, setShowTxModal] = useState(false);
@@ -28,6 +34,7 @@ export function SocialFeatures() {
   const [currentAction, setCurrentAction] = useState<'flex' | 'meme'>();
   const [flexStatus, setFlexStatus] = useState<FlexStatus | null>(null);
   const { toast } = useToast();
+  const { addEvent } = useSocialFeed();
 
   const fetchFlexStatus = async () => {
     if (!address) return null;
@@ -135,6 +142,21 @@ export function SocialFeatures() {
         });
         
         await fetchFlexStatus();
+        const power = request.args && request.args.length > 1 ? request.args[1] : 'unknown power';
+        const gladiatorData = await publicClient.readContract({
+          ...contracts.gladiatorArena,
+          functionName: 'getGladiator',
+          args: [address],
+        }) as Gladiator;
+
+        const newEvent = {
+          id: currentTxHash || crypto.randomUUID(),
+          type: SocialEventType.FLEX,
+          sender: address as `0x${string}`,
+          content: `${gladiatorData.name} flexed with power ${power}`,
+          timestamp: Date.now(),
+        };
+        addEvent(newEvent);
       }
     } catch (error: unknown) {
       console.error('Failed to flex:', error);
@@ -207,6 +229,22 @@ export function SocialFeatures() {
           title: "Based Alert! 🔥",
           description: "Your galaxy brain meme is being etched into the blockchain! IYKYK 🧠"
         });
+
+        // Gladiatör adını almak için cüzdan adresini kullan
+        const gladiatorData = await publicClient.readContract({
+          ...contracts.gladiatorArena,
+          functionName: 'getGladiator',
+          args: [address],
+        }) as Gladiator;
+
+        const newEvent = {
+          id: currentTxHash || crypto.randomUUID(),
+          type: SocialEventType.MEME,
+          sender: address as `0x${string}`,
+          content: `${gladiatorData.name} posted a meme: ${meme}`,
+          timestamp: Date.now(),
+        };
+        addEvent(newEvent);
       }
     } catch (error: unknown) {
       console.error('Failed to post meme:', error);
