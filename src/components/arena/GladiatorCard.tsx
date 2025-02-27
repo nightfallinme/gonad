@@ -28,6 +28,7 @@ interface GladiatorCardProps {
   showStats?: boolean;
   showKillButton?: boolean;
   isKillDisabled?: boolean;
+  showLevel?: boolean;
 }
 
 export function GladiatorCard({
@@ -43,7 +44,8 @@ export function GladiatorCard({
   onKill,
   showStats = true,
   showKillButton = false,
-  isKillDisabled = false
+  isKillDisabled = false,
+  showLevel = true
 }: GladiatorCardProps) {
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout>();
   const [killProgress, setKillProgress] = useState(0);
@@ -121,7 +123,9 @@ export function GladiatorCard({
               </div>
             )}
           </div>
-          <CardDescription className="text-[#826ef8]/90">Level {level} Gladiator</CardDescription>
+          {showLevel && (
+            <CardDescription className="text-[#826ef8]/90">Level {level} Gladiator</CardDescription>
+          )}
         </div>
       </CardHeader>
 

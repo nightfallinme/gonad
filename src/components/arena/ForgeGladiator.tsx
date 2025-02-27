@@ -12,6 +12,7 @@ import { useGladiatorImages } from '@/hooks/useGladiatorImages';
 import { useToast } from "@/components/ui/use-toast";
 import { publicClient } from '@/lib/viem';
 import { simulateContract, waitForTransactionReceipt } from 'viem/actions';
+import { useGladiators } from '@/contexts/GladiatorContext';
 
 interface Gladiator {
   name: string;
@@ -50,6 +51,7 @@ interface ForgeGladiatorProps {
 export function ForgeGladiator({ onGladiatorCreated }: ForgeGladiatorProps) {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const { gladiators, getGladiator } = useGladiators();
   const [name, setName] = useState('');
   const [battleCry, setBattleCry] = useState('');
   const { getGladiatorImage, setGladiatorImage } = useGladiatorImages();
@@ -230,26 +232,40 @@ export function ForgeGladiator({ onGladiatorCreated }: ForgeGladiatorProps) {
     }
   };
 
-
-
   // Verileri yükle
   const loadData = async () => {
     if (!address) return;
     setIsLoading(true);
     try {
+      // Önce GladiatorContext'ten kontrol et
+      const existingGladiator = getGladiator(address);
+      
+      if (existingGladiator) {
+        setGladiatorData(existingGladiator.gladiator);
+        setIsGladiator(true);
+        setEarnings(existingGladiator.earnings);
+        setIsLoading(false);
+        return;
+      }
+
+      // Context'te yoksa kontrat üzerinden kontrol et
       const [gladiator, isGlad, earningsData] = await Promise.all([
         fetchGladiatorData(),
         checkIsGladiator(),
         checkEarnings()
       ]);
       
-      // State güncellemelerini ayrı ayrı yapalım
       if (gladiator) setGladiatorData(gladiator as Gladiator);
       if (typeof isGlad === 'boolean') setIsGladiator(isGlad);
       if (earningsData) setEarnings(earningsData as bigint);
-      
+
     } catch (error) {
       console.error('Error loading data:', error);
+      toast({
+        variant: "destructive",
+        title: "Error Loading Data ❌",
+        description: "Failed to load gladiator data. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -640,6 +656,7 @@ export function ForgeGladiator({ onGladiatorCreated }: ForgeGladiatorProps) {
                 }}
                 showStats={false}
                 showKillButton={true}
+                showLevel={false}
                 onKill={handleKill}
                 isKillDisabled={txState.isWaitingTx || txState.isWaitingApprove || txState.isWaitingKill}
               />

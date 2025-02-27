@@ -61,7 +61,97 @@ export function BattleArena() {
     battleId: bigint;
     rarity: number;
   } | null>(null);
+  const [hasAllowance, setHasAllowance] = useState(false);
+  const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const { toast } = useToast();
+
+  // Allowance kontrolü
+  const checkAllowance = async () => {
+    if (!address || !selectedOpponent) return;
+    
+    setIsCheckingAllowance(true);
+    try {
+      const allowance = await publicClient.readContract({
+        ...contracts.gonadToken,
+        functionName: 'allowance',
+        args: [address, contracts.gladiatorArena.address],
+      }) as bigint;
+
+      const fightFee = BigInt(1 * 10**18); // 1 GONAD
+      setHasAllowance(allowance >= fightFee);
+    } catch (error) {
+      console.error('Error checking allowance:', error);
+      toast({
+        variant: "destructive",
+        title: "Allowance Check Failed! 💀",
+        description: "Ser we got rugged checking your allowance!",
+      });
+    } finally {
+      setIsCheckingAllowance(false);
+    }
+  };
+
+  // Opponent seçildiğinde allowance kontrolü yap
+  useEffect(() => {
+    if (selectedOpponent) {
+      checkAllowance();
+    }
+  }, [selectedOpponent]);
+
+  // Approve işlemi
+  const handleApprove = async () => {
+    if (!walletClient || !address) {
+      toast({
+        variant: "destructive",
+        title: "Anon Detected! 💀",
+        description: "Connect wallet first ser! Don't be ngmi!",
+      });
+      return;
+    }
+
+    setIsApproving(true);
+    try {
+      // Max allowance için simulate
+      const { request } = await simulateContract(publicClient, {
+        ...contracts.gonadToken,
+        functionName: 'approve',
+        args: [contracts.gladiatorArena.address, BigInt('115792089237316195423570985008687907853269984665640564039457584007913129639935')],
+        account: address,
+      });
+
+      toast({
+        title: "Sign For Glory! ⚔️",
+        description: "Sign the tx ser! Let's get this approval done!",
+      });
+
+      const hash = await walletClient.writeContract(request);
+
+      toast({
+        title: "Based Move! ⏳",
+        description: "Approval tx in the pool, stay diamond hands...",
+      });
+
+      const receipt = await waitForTransactionReceipt(publicClient, { hash });
+
+      if (receipt.status === 'success') {
+        toast({
+          title: "WAGMI! Approval Success! 🎉",
+          description: "Time to battle ser! LFG!",
+        });
+        setHasAllowance(true);
+      }
+    } catch (error) {
+      console.error('Approve error:', error);
+      toast({
+        variant: "destructive",
+        title: "Approval Rugged! 💀",
+        description: error instanceof Error ? error.message : "Ser you got rekt during approval!",
+      });
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   // Rakip seçildiğinde otomatik olarak battle tab'ına geç
   useEffect(() => {
@@ -554,17 +644,29 @@ export function BattleArena() {
         {activeTab === 'battle' && selectedOpponent && opponentGladiator && (
           <div className="flex justify-center mt-4">
             <Button
-              onClick={() => handleChallenge(selectedOpponent)}
-              disabled={isBattleLoading}
+              onClick={() => hasAllowance ? handleChallenge(selectedOpponent) : handleApprove()}
+              disabled={isBattleLoading || isApproving || isCheckingAllowance}
               className="w-[300px] h-12 bg-gradient-to-r from-[#826ef8] to-[#826ef8]/80 text-white rounded-lg hover:opacity-90 transition-opacity"
             >
-              {isBattleLoading ? (
+              {isCheckingAllowance ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Checking Allowance...
+                </>
+              ) : isApproving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Approving...
+                </>
+              ) : isBattleLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Battling...
                 </>
+              ) : hasAllowance ? (
+                'Start Battle ⚔️'
               ) : (
-                'Challenge to Battle'
+                'Approve Fight 🤝'
               )}
             </Button>
           </div>

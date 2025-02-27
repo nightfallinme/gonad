@@ -37,15 +37,24 @@ export function SearchGladiatorModal({ isOpen, onClose, onSelect }: SearchGladia
   const { address } = useAccount();
   const [searchTerm, setSearchTerm] = useState('');
   const [displayedGladiators, setDisplayedGladiators] = useState<GladiatorWithData[]>([]);
-  const { gladiators, isLoading, error } = useGladiators();
+  const { gladiators, isLoading, error, refreshGladiators } = useGladiators();
+
+  // Modal açıldığında gladyatörleri yenile
+  useEffect(() => {
+    if (isOpen && address) {
+      refreshGladiators(address);
+    }
+  }, [isOpen, address]);
 
   // Arama terimi değiştiğinde filtreleme yap
   useEffect(() => {
     // Önce kendi gladyatörünü filtrele
-    const filteredGladiators = gladiators.map(g => ({
-      ...g,
-      isActive: true, // All gladiators from context are active
-    }));
+    const filteredGladiators = gladiators
+      .filter(g => g.address.toLowerCase() !== address?.toLowerCase()) // Kendi gladyatörünü çıkar
+      .map(g => ({
+        ...g,
+        isActive: true, // All gladiators from context are active
+      }));
 
     if (searchTerm.trim() === '') {
       // Arama yoksa, tüm listeyi göster (earnings'e göre sıralı)

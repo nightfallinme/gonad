@@ -82,25 +82,48 @@ export function GladiatorProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      // Get gladiator data
-      const gladiatorData = await publicClient.readContract({
+      // Get all gladiator addresses
+      const allAddresses = await publicClient.readContract({
         ...contracts.gladiatorArena,
-        functionName: 'getGladiator',
-        args: [walletAddress],
-      }) as Gladiator;
+        functionName: 'getAllGladiators',
+      }) as `0x${string}`[];
 
-      // Get earnings data
-      const earnings = await publicClient.readContract({
-        ...contracts.gladiatorArena,
-        functionName: 'getEarnings',
-        args: [walletAddress],
-      }) as bigint;
+      const newGladiators: GladiatorEntry[] = [];
 
-      const newGladiators = [{
-        address: walletAddress,
-        gladiator: gladiatorData,
-        earnings: earnings,
-      }];
+      // Fetch data for each gladiator
+      for (const address of allAddresses) {
+        try {
+          // Get gladiator data
+          const gladiatorData = await publicClient.readContract({
+            ...contracts.gladiatorArena,
+            functionName: 'getGladiator',
+            args: [address],
+          }) as Gladiator;
+
+          // Get earnings data
+          const earnings = await publicClient.readContract({
+            ...contracts.gladiatorArena,
+            functionName: 'totalEarnings',
+            args: [address],
+          }) as bigint;
+
+          // Only add active gladiators (level > 0)
+          if (gladiatorData.level > 0) {
+            newGladiators.push({
+              address,
+              gladiator: gladiatorData,
+              earnings,
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to fetch gladiator data for ${address}:`, error);
+          // Continue with other gladiators even if one fails
+          continue;
+        }
+      }
+
+      // Sort gladiators by earnings
+      newGladiators.sort((a, b) => Number(b.earnings - a.earnings));
 
       // Update cache
       gladiatorCache = {
