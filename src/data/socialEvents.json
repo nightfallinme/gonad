@@ -1,0 +1,18 @@
+{
+  "events": [
+    {
+      "id": "initial-1",
+      "type": "meme",
+      "sender": "0x3913F91bAa2Ed68a512EFaCa3ADdEA8e535Fca27",
+      "content": "First meme in GONAD Arena! 🚀",
+      "timestamp": 1697123456789
+    },
+    {
+      "id": "initial-2", 
+      "type": "flex",
+      "sender": "0x3913F91bAa2Ed68a512EFaCa3ADdEA8e535Fca27",
+      "content": "Flexed with power 42",
+      "timestamp": 1697123456790
+    }
+  ]
+}

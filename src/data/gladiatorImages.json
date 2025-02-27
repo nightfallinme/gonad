@@ -1,0 +1,40 @@
+{
+  "images": {
+    "gladiator1": {
+      "id": "1",
+      "imageUrl": "/images/gonad.png",
+      "timestamp": "",
+      "name": ""
+    },
+    "gladiator2": {
+      "id": "2",
+      "imageUrl": "/images/gonad.png",
+      "timestamp": "",
+      "name": ""
+    },
+    "gladiator3": {
+      "id": "3",
+      "imageUrl": "/images/gonad.png",
+      "timestamp": "",
+      "name": ""
+    },
+    "gladiator4": {
+      "id": "4",
+      "imageUrl": "/images/gonad.png",
+      "timestamp": "",
+      "name": ""
+    },
+    "gladiator5": {
+      "id": "5",
+      "imageUrl": "/images/gonad.png",
+      "timestamp": "",
+      "name": ""
+    },
+    "gladiator0x3913F91bAa2Ed68a512EFaCa3ADdEA8e535Fca27": {
+      "id": "0x3913F91bAa2Ed68a512EFaCa3ADdEA8e535Fca27",
+      "imageUrl": "https://i.imgur.com/dYOHtmN.jpeg",
+      "timestamp": "2025-02-27T05:50:52.154Z",
+      "name": "Gladiator 0x3913F91bAa2Ed68a512EFaCa3ADdEA8e535Fca27"
+    }
+  }
+}
