@@ -51,7 +51,7 @@ interface ForgeGladiatorProps {
 export function ForgeGladiator({ onGladiatorCreated }: ForgeGladiatorProps) {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { gladiators, getGladiator } = useGladiators();
+  const {getGladiator } = useGladiators();
   const [name, setName] = useState('');
   const [battleCry, setBattleCry] = useState('');
   const { getGladiatorImage, setGladiatorImage } = useGladiatorImages();
