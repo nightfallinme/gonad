@@ -9,7 +9,8 @@ import {
   Globe, 
   Twitter, 
   Github, 
-  Music 
+  Music,
+  X
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -61,17 +62,26 @@ export function AboutNightfallModal({ isOpen, onClose }: { isOpen: boolean, onCl
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[600px] bg-gradient-to-br from-black to-[#1A0B2E] border-[#826ef8]/20">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-white">
-              <Avatar className="w-24 h-24 border-4 border-[#826ef8]">
-                <AvatarImage src="/images/nfall.jpg" alt="Nightfall" className="object-cover" />
-                <AvatarFallback>NF</AvatarFallback>
-              </Avatar>
-              <div>
-                <div className="text-2xl font-bold">Nightfall</div>
-                <div className="text-sm text-[#826ef8]">Full Stack Blockchain Developer</div>
-                <div className="text-xs text-white/70 mt-1">🏷️ for tips - thenightfall.eth</div>
-              </div>
-            </DialogTitle>
+            <div className="flex items-start justify-between">
+              <DialogTitle className="flex items-center gap-2 text-white">
+                <Avatar className="w-24 h-24 border-4 border-[#826ef8]">
+                  <AvatarImage src="/images/nfall.jpg" alt="Nightfall" className="object-cover" />
+                  <AvatarFallback>NF</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="text-2xl font-bold">Nightfall</div>
+                  <div className="text-sm text-[#826ef8]">Full Stack Blockchain Developer</div>
+                  <div className="text-xs text-white/70 mt-1">🏷️ for tips - thenightfall.eth</div>
+                </div>
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                className="w-8 h-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                onClick={onClose}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
             <DialogDescription asChild className="text-neutral-300 mt-4 space-y-4">
               <div className="space-y-4">
                 <div className="text-sm">

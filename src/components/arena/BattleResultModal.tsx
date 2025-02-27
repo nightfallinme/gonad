@@ -6,6 +6,7 @@ import { contracts } from '@/config/contracts';
 import { Swords, Crown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGladiatorImages } from '@/hooks/useGladiatorImages';
+import { Button } from "@/components/ui/button";
 
 
 interface BattleResultModalProps {
@@ -104,12 +105,21 @@ export function BattleResultModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-black/95 border border-[#826ef8]/20 backdrop-blur-none">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold text-white">
-            {isWaiting ? "⚔️ Epic Battle in Progress!" : 
-             isWaitingForEvent ? "⚔️ Calculating Results..." :
-             showResultState ? "🎉 Battle Complete!" :
-             isError ? "💀 Battle Failed!" : "⚔️ Preparing Battle..."}
-          </DialogTitle>
+          <div className="flex items-start justify-between">
+            <DialogTitle className="text-center text-2xl font-bold text-white">
+              {isWaiting ? "⚔️ Epic Battle in Progress!" : 
+               isWaitingForEvent ? "⚔️ Calculating Results..." :
+               showResultState ? "🎉 Battle Complete!" :
+               isError ? "💀 Battle Failed!" : "⚔️ Preparing Battle..."}
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              className="w-8 h-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </DialogHeader>
 
         <div className="flex flex-col items-center justify-center p-4 space-y-6">

@@ -66,6 +66,39 @@ export default function Home() {
   const [tokenBalance, setTokenBalance] = useState<bigint | null>(null);
   const [isHoveringTokenButton, setIsHoveringTokenButton] = useState(false);
 
+  // Token bakiyesini yenileme fonksiyonu
+  const fetchTokenBalance = async () => {
+    if (!address) {
+      setTokenBalance(null);
+      return;
+    }
+
+    try {
+      const balance = await publicClient.readContract({
+        ...contracts.gonadToken,
+        functionName: 'balanceOf',
+        args: [address],
+      }) as bigint;
+
+      setTokenBalance(balance);
+    } catch (error) {
+      console.error('Failed to fetch token balance:', error);
+      setTokenBalance(null);
+    }
+  };
+
+  // Her 10 saniyede bir token bakiyesini güncelle
+  useEffect(() => {
+    // İlk yükleme
+    fetchTokenBalance();
+
+    // Interval oluştur
+    const interval = setInterval(fetchTokenBalance, 30000);
+
+    // Cleanup function
+    return () => clearInterval(interval);
+  }, [address]);
+
   // Gladiator var mı kontrolü
   useEffect(() => {
     const fetchGladiator = async () => {
@@ -89,31 +122,6 @@ export default function Home() {
     };
 
     fetchGladiator();
-  }, [address]);
-
-  // Token bakiyesini fetch et
-  useEffect(() => {
-    const fetchTokenBalance = async () => {
-      if (!address) {
-        setTokenBalance(null);
-        return;
-      }
-
-      try {
-        const balance = await publicClient.readContract({
-          ...contracts.gonadToken,
-          functionName: 'balanceOf',
-          args: [address],
-        }) as bigint;
-
-        setTokenBalance(balance);
-      } catch (error) {
-        console.error('Failed to fetch token balance:', error);
-        setTokenBalance(null);
-      }
-    };
-
-    fetchTokenBalance();
   }, [address]);
 
   useEffect(() => {
@@ -145,17 +153,18 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#826ef8]/20 bg-black/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex flex-col items-start">
-            <h1 className="text-2xl font-bold tracking-wider bg-gradient-to-r from-[#826ef8] to-[#826ef8]/80 text-transparent bg-clip-text [text-shadow:_0_0_1px_rgb(255_255_255_/_50%)]">
+            <h1 className="text-xl md:text-2xl font-bold tracking-wider bg-gradient-to-r from-[#826ef8] to-[#826ef8]/80 text-transparent bg-clip-text [text-shadow:_0_0_1px_rgb(255_255_255_/_50%)]">
               GONAD ARENA
             </h1>
-            <p className="text-[10px] text-neutral-400 tracking-wider">
+            <p className="text-[8px] md:text-[10px] text-neutral-400 tracking-wider">
               gladiators of naked arena domination
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Button
               variant="outline"
-              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all"
+              size="sm"
+              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all hidden md:flex"
               onClick={() => setShowSocialBoard(true)}
             >
               <MessageCircle className="w-4 h-4 mr-2 text-[#826ef8]" />
@@ -163,14 +172,32 @@ export default function Home() {
             </Button>
             <Button
               variant="outline"
-              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all"
+              size="sm"
+              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all md:hidden"
+              onClick={() => setShowSocialBoard(true)}
+            >
+              <MessageCircle className="w-4 h-4 text-[#826ef8]" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all hidden md:flex"
               onClick={() => setShowAirdrop(true)}
             >
               <Gift className="w-4 h-4 mr-2 text-[#826ef8]" />
               <span className="text-white">AIRDROP</span>
             </Button>
             <Button
-              variant="outline" 
+              variant="outline"
+              size="sm"
+              className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all md:hidden"
+              onClick={() => setShowAirdrop(true)}
+            >
+              <Gift className="w-4 h-4 text-[#826ef8]" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               className="bg-[#826ef8]/10 border-[#826ef8]/50 hover:border-[#826ef8] hover:bg-[#826ef8]/20 text-white transition-all"
               onMouseEnter={() => setIsHoveringTokenButton(true)}
               onMouseLeave={() => setIsHoveringTokenButton(false)}
@@ -178,18 +205,18 @@ export default function Home() {
             >
               {!address ? (
                 <>
-                  <Coins className="w-4 h-4 mr-2 text-[#826ef8]" />
-                  <span className="text-white">BUY GONAD</span>
+                  <Coins className="w-4 h-4 mr-0 md:mr-2 text-[#826ef8]" />
+                  <span className="text-white hidden md:inline">BUY GONAD</span>
                 </>
               ) : isHoveringTokenButton ? (
                 <>
-                  <Coins className="w-4 h-4 mr-2 text-[#826ef8]" />
-                  <span className="text-white">BUY GONAD</span>
+                  <Coins className="w-4 h-4 mr-0 md:mr-2 text-[#826ef8]" />
+                  <span className="text-white hidden md:inline">BUY GONAD</span>
                 </>
               ) : (
                 <>
-                  <Coins className="w-4 h-4 mr-2 text-[#826ef8]" />
-                  <span className="text-white">
+                  <Coins className="w-4 h-4 mr-0 md:mr-2 text-[#826ef8]" />
+                  <span className="text-white hidden md:inline">
                     {tokenBalance !== null ? formatTokenAmount(tokenBalance) : 'Loading...'}
                   </span>
                 </>

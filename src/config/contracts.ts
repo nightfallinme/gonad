@@ -4,6 +4,8 @@ export const GLADIATOR_ARENA_ADDRESS = '0x54e1d41837bDc3448101Eeffa779A959fA48bb
 export const GONAD_DISTRIBUTOR_ADDRESS = '0x7f88E6995dF4956D3c3430236EE36111B9aCFa6D';
 
 
+
+
 // Contract ABIs will be imported from the artifacts
 import gladiatorArenaABI from './abi/GladiatorArena.json';
 import gonadTokenABI from './abi/Gonad.json';

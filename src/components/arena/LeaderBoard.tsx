@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Crown,  ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trophy, Crown,  ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -235,19 +235,28 @@ export function LeaderBoard({ isOpen, onClose, onSelect, isModal = false }: Lead
         <Dialog open={isOpen} onOpenChange={onClose}>
           <DialogContent className="bg-black/95 border-[#826ef8]/20 max-w-4xl h-[85vh] p-0 overflow-hidden">
             <DialogHeader className="px-6 py-3 border-b border-[#826ef8]/20">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Trophy className="w-6 h-6 text-[#826ef8]" />
-                  <div className="absolute inset-0 bg-[#826ef8]/20 rounded-full filter blur-[8px] animate-pulse" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <Trophy className="w-6 h-6 text-[#826ef8]" />
+                    <div className="absolute inset-0 bg-[#826ef8]/20 rounded-full filter blur-[8px] animate-pulse" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text">
+                      Leaderboard
+                    </DialogTitle>
+                    <p className="text-sm text-white/60 mt-1">
+                      Select a gladiator to challenge them in the arena
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text">
-                    Leaderboard
-                  </DialogTitle>
-                  <p className="text-sm text-white/60 mt-1">
-                    Select a gladiator to challenge them in the arena
-                  </p>
-                </div>
+                <Button
+                  variant="ghost"
+                  className="w-8 h-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                  onClick={onClose}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </DialogHeader>
 
