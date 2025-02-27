@@ -752,7 +752,7 @@ export function ForgeGladiator({ onGladiatorCreated }: ForgeGladiatorProps) {
 
         <div className="text-center">
           <p className="text-sm text-white/60">
-            Entry Fee: 100 $GONAD
+            Mint Fee:  Free!
           </p>
         </div>
       </CardContent>
