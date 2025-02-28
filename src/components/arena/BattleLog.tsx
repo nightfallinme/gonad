@@ -9,7 +9,7 @@ import { publicClient } from '@/lib/viem';
 import { useGladiators } from '@/contexts/GladiatorContext';
 import { Card } from '@/components/ui/card';
 import { contracts } from '@/config/contracts';
-import Image from 'next/image';
+
 
 interface BattleLogEntry {
   winner: `0x${string}`;
