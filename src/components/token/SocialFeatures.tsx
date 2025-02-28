@@ -23,6 +23,7 @@ interface FlexStatus {
 
 interface Gladiator {
   name: string;
+  strength: string;
 }
 
 export function SocialFeatures() {
@@ -142,12 +143,13 @@ export function SocialFeatures() {
         });
         
         await fetchFlexStatus();
-        const power = request.args && request.args.length > 1 ? request.args[1] : 'unknown power';
         const gladiatorData = await publicClient.readContract({
           ...contracts.gladiatorArena,
           functionName: 'getGladiator',
           args: [address],
         }) as Gladiator;
+
+        const power = gladiatorData.strength;
 
         const newEvent = {
           id: currentTxHash || crypto.randomUUID(),
@@ -241,7 +243,7 @@ export function SocialFeatures() {
           id: currentTxHash || crypto.randomUUID(),
           type: SocialEventType.MEME,
           sender: address as `0x${string}`,
-          content: `${gladiatorData.name} posted a meme: ${meme}`,
+          content: `${gladiatorData.name} posted a meme: ${meme} with power ${gladiatorData.strength}`,
           timestamp: Date.now(),
         };
         addEvent(newEvent);

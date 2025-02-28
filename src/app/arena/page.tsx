@@ -1,11 +1,12 @@
 'use client';
 
+import { GladiatorProvider, useGladiators } from '@/contexts/GladiatorContext';
 import { BattleArena } from '@/components/arena/BattleArena';
 import { LeaderBoard } from '@/components/arena/LeaderBoard';
 import { BattleLog } from '@/components/arena/BattleLog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Trophy, ChevronDown } from "lucide-react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GladiatorCreatedModal } from '@/components/arena/GladiatorCreatedModal';
 import { ForgeGladiator } from '@/components/arena/ForgeGladiator';
 
@@ -19,9 +20,17 @@ interface GladiatorModalData {
   battleCry: string;
 }
 
-export default function ArenaPage() {
+function ArenaPage() {
+  const { address, refreshGladiators } = useGladiators();
   const [showGladiatorModal, setShowGladiatorModal] = useState(false);
   const [gladiatorModalData, setGladiatorModalData] = useState<GladiatorModalData | undefined>();
+
+  useEffect(() => {
+    // İlk yüklemede gladiatörleri yenile
+    if (address) {
+      refreshGladiators(address);
+    }
+  }, []); // Boş bağımlılık dizisi ile sadece ilk yüklemede çalışır
 
   return (
     <main className="container mx-auto p-0 space-y-8">
@@ -66,5 +75,13 @@ export default function ArenaPage() {
         gladiator={gladiatorModalData}
       />
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <GladiatorProvider>
+      <ArenaPage />
+    </GladiatorProvider>
   );
 } 
